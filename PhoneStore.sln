@@ -1,0 +1,27 @@
+PhoneStore.sln
+│
+├── src/
+│   │
+│   ├── PhoneStore.Domain/                     # Tầng cốt lõi (Entities & Interfaces)
+│   │   ├── Entities/                          # Chứa các thực thể: Customer, Product, Order, OrderDetail, Category...
+│   │   ├── ValueObjects/                      # Các đối tượng giá trị (nếu có)
+│   │   └── Repositories/                      # Khai báo các Interface Repository (IProductRepository, IOrderRepository...)
+│   │
+│   ├── PhoneStore.Application/                # Tầng nghiệp vụ (Business Logic / Use Cases)
+│   │   ├── DTOs/                              # Các Data Transfer Objects (ProductDto, OrderRequestDto...)
+│   │   ├── Services/                          # Triển khai logic nghiệp vụ (ProductService, OrderService...)
+│   │   └── Mappings/                          # Cấu hình ánh xạ dữ liệu (AutoMapper Profile)
+│   │
+│   ├── PhoneStore.Infrastructure/             # Tầng hạ tầng (Database & External Services)
+│   │   ├── Data/                              # DbContext (EF Core), cấu hình Fluent API cho CSDL
+│   │   ├── Repositories/                      # Triển khai các Repository (ProductRepository, OrderRepository...)
+│   │   └── Services/                          # Tích hợp dịch vụ ngoài (VNPay Service, GHN Logistics Service, Email Service)
+│   │
+│   └── PhoneStore.WebAPI/                     # Tầng giao diện / Trình bày (Presentation Layer)
+│       ├── Controllers/                       # Các API Endpoints: ProductController, OrderController, AuthController...
+│       ├── Middlewares/                       # Xử lý lỗi toàn cục (Global Exception Handling), Logging (Serilog)
+│       ├── appsettings.json                   # Cấu hình chuỗi kết nối CSDL, khóa JWT, cấu hình thanh toán
+│       └── Program.cs                         # Khởi chạy ứng dụng, cấu hình Dependency Injection (DI)
+│
+└── tests/
+    └── PhoneStore.UnitTests/                  # Dự án kiểm thử (Unit Tests cho Business Logic)
