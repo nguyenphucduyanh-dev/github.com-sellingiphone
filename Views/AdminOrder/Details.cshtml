@@ -1,0 +1,87 @@
+@model PhoneStore.Web.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.Id;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Chi Tiết Đơn Hàng #@Model.Id</h3>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="row">
+        <!-- Cột trái: Thông tin khách hàng & Form cập nhật trạng thái -->
+        <div class="col-md-5">
+            <div class="card p-3 mb-3">
+                <h5>Thông tin nhận hàng</h5>
+                <p><strong>Người nhận:</strong> @Model.ReceiverName</p>
+                <p><strong>Số điện thoại:</strong> @Model.ReceiverPhone</p>
+                <p><strong>Địa chỉ:</strong> @Model.ShippingAddress</p>
+                <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                <p><strong>Ghi chú:</strong> @(string.IsNullOrEmpty(Model.Note) ? "Không có" : Model.Note)</p>
+                
+                <hr />
+                <h5>Xử lý trạng thái đơn hàng</h5>
+                <form asp-action="UpdateStatus" method="post" class="mt-2">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    
+                    <div class="mb-3">
+                        <select name="newStatus" class="form-select">
+                            <option value="0" selected="@(Model.Status == 0)">Chờ xử lý</option>
+                            <option value="1" selected="@(Model.Status == 1)">Đang giao hàng</option>
+                            <option value="2" selected="@(Model.Status == 2)">Đã hoàn thành</option>
+                            <option value="-1" selected="@(Model.Status == -1)">Hủy đơn hàng (Hoàn kho)</option>
+                        </select>
+                    </div>
+
+                    <!-- Khóa nút cập nhật nếu đơn đã hoàn thành hoặc đã hủy để tránh sửa nhầm -->
+                    @if (Model.Status == 2 || Model.Status == -1)
+                    {
+                        <div class="alert alert-warning small">Đơn hàng đã đóng, không thể thay đổi trạng thái.</div>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary w-100">Cập nhật trạng thái</button>
+                    }
+                </form>
+            </div>
+        </div>
+
+        <!-- Cột phải: Danh sách điện thoại khách đặt -->
+        <div class="col-md-7">
+            <div class="card p-3">
+                <h5>Danh sách sản phẩm đặt mua</h5>
+                <table class="table table-bordered mt-2 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>@item.Product?.Name</td>
+                                <td>@item.UnitPrice.ToString("N0") VNĐ</td>
+                                <td>@item.Quantity</td>
+                                <td class="fw-bold">@((item.UnitPrice * item.Quantity).ToString("N0")) VNĐ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h5 class="text-end text-danger mt-2">
+                    Tổng thanh toán: @Model.TotalAmount.ToString("N0") VNĐ
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
