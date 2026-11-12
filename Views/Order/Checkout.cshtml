@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+    var cartItems = ViewBag.CartItems as List<PhoneStore.Web.Models.CartItem>;
+}
+
+<div class="container mt-4">
+    <h2>Xác Nhận Đặt Hàng</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row mt-3">
+        <!-- Cột trái: Form nhập thông tin người nhận -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h5>Thông tin giao hàng</h5>
+                <form asp-action="Checkout" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên người nhận (*)</label>
+                        <input type="text" name="receiverName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại (*)</label>
+                        <input type="tel" name="receiverPhone" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ nhận hàng chi tiết (*)</label>
+                        <textarea name="shippingAddress" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú đơn hàng</label>
+                        <input type="text" name="note" class="form-control" placeholder="VD: Giao giờ hành chính..." />
+                    </div>
+                    <div class="alert alert-secondary small">
+                        Phương thức thanh toán: <strong>Thanh toán tiền mặt khi nhận hàng (COD)</strong>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 fw-bold">XÁC NHẬN ĐẶT HÀNG</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cột phải: Tóm tắt đơn hàng -->
+        <div class="col-md-6">
+            <div class="card p-3 bg-light">
+                <h5>Tóm tắt sản phẩm (@cartItems?.Count món)</h5>
+                <ul class="list-group list-group-flush mb-3">
+                    @if (cartItems != null)
+                    {
+                        foreach (var item in cartItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between bg-light">
+                                <span>@item.ProductName <strong>(x@item.Quantity)</strong></span>
+                                <span>@item.TotalPrice.ToString("N0") VNĐ</span>
+                            </li>
+                        }
+                    }
+                </ul>
+                <h5 class="d-flex justify-content-between text-danger">
+                    <span>Tổng cộng:</span>
+                    <span>@ViewBag.TotalAmount.ToString("N0") VNĐ</span>
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
