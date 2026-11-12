@@ -1,55 +1,62 @@
 using Microsoft.AspNetCore.Mvc;
-using PhoneStore.Domain.Entities;
-using PhoneStore.Domain.Repositories;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PhoneStore.Web.Models;
 
-namespace PhoneStore.WebAPI.Controllers
+namespace PhoneStore.Web.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController : Controller
     {
-        private readonly IProductRepository _productRepository;
+        private readonly ApplicationDbContext _context;
 
-        // Dependency Injection: Tiêm IProductRepository qua Constructor
-        public ProductController(IProductRepository productRepository)
+        // Tiêm trực tiếp DbContext để thao tác CSDL nhanh chóng
+        public ProductController(ApplicationDbContext context)
         {
-            _productRepository = productRepository;
+            _context = context;
         }
 
-        // GET: api/Product
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        // GET: /Product/Index
+        // Hỗ trợ đồng thời: Tìm kiếm từ khóa, Lọc theo Hãng (Category), Lọc theo khoảng Giá
+        public async Task<IActionResult> Index(string searchString, int? categoryId, decimal? minPrice, decimal? maxPrice)
         {
-            var products = await _productRepository.GetAllAsync();
-            return Ok(products);
-        }
+            // Khởi tạo truy vấn ban đầu kèm theo bảng Category (Hãng điện thoại)
+            var productsQuery = _context.Products.Include(p => p.Category).AsQueryable();
 
-        // GET: api/Product/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product == null)
+            // 1. Lọc theo từ khóa tìm kiếm (Tên điện thoại hoặc mô tả)
+            if (!string.IsNullOrEmpty(searchString))
             {
-                return NotFound(new { message = $"Không tìm thấy sản phẩm với mã: {id}" });
-            }
-            return Ok(product);
-        }
-
-        // POST: api/Product
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Product product)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+                productsQuery = productsQuery.where(p => p.Name.Contains(searchString) || p.Description.Contains(searchString));
+                
+                // Giữ lại từ khóa tìm kiếm trên giao diện View để hiển thị lại cho người dùng
+                ViewBag.SearchString = searchString;
             }
 
-            await _productRepository.AddAsync(product);
-            await _productRepository.SaveChangesAsync();
+            // 2. Lọc theo hãng sản xuất (CategoryId)
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                productsQuery = productsQuery.where(p => p.CategoryId == categoryId.Value);
+                ViewBag.SelectedCategoryId = categoryId.Value;
+            }
 
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            // 3. Lọc theo khoảng giá (Từ giá min đến giá max)
+            if (minPrice.HasValue)
+            {
+                productsQuery = productsQuery.where(p => p.Price >= minPrice.Value);
+                ViewBag.MinPrice = minPrice.Value;
+            }
+
+            if (maxPrice.HasValue)
+            {
+                productsQuery = productsQuery.where(p => p.Price <= maxPrice.Value);
+                ViewBag.MaxPrice = maxPrice.Value;
+            }
+
+            // Truyền danh sách Hãng (Categories) sang giao diện để đổ dữ liệu vào thẻ <select> hoặc menu lọc
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            // Thực thi câu lệnh truy vấn SQL lấy danh sách sản phẩm thỏa mãn điều kiện
+            var model = await productsQuery.ToListAsync();
+
+            return View(model);
         }
     }
 }
