@@ -1,0 +1,39 @@
+commit 7f8a12c
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-15
+    docs: Hoàn thiện tài liệu báo cáo các chương 4, 5, 6 và kịch bản kiểm thử hệ thống.
+
+commit 4e3b91a
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-14
+    feat(admin): Thêm AdminOrderController, giao diện duyệt đơn và logic tự động hoàn trả tồn kho khi hủy đơn.
+
+commit 9c2f84e
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-12
+    feat(auth): Cấu hình Cookie Authentication, phân quyền Role (Admin/Customer) và trang đăng nhập/đăng xuất.
+
+commit 2d1a77f
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-10
+    feat(order): Xây dựng luồng Checkout, áp dụng Database Transaction chống âm kho và trừ số lượng sản phẩm tự động.
+
+commit 5b8e32c
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-08
+    feat(cart): Hiện thực hóa giỏ hàng lưu trữ qua Session và JSON serialization (Thêm, xóa, tính tổng tiền).
+
+commit 8f4c109
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-05
+    feat(product): Xây dựng ProductController với chức năng tìm kiếm từ khóa, lọc theo hãng và khoảng giá tối ưu bằng AsQueryable().
+
+commit 3a9e41d
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-02
+    refactor: Tái cấu trúc từ Clean Architecture sang mô hình ASP.NET Core MVC (Single Project) để tối ưu thời gian phát triển cho solo dev.
+
+commit 1c6b205
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-10-30
+    chore: Khởi tạo Solution ASP.NET Core MVC, cấu hình ApplicationDbContext, kết nối SQL Server và ExceptionHandlingMiddleware.
