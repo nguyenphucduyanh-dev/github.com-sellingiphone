@@ -1,3 +1,8 @@
+commit a81d54e
+Author: Solo Developer <nguyenphucduyanh@dev>
+Date:   2026-11-21
+    feat(winforms): Thêm ứng dụng Windows Forms quản lý sản phẩm, tìm kiếm/lọc, lập hóa đơn và trừ tồn kho bằng SqlTransaction kèm script SQL và App.config.
+
 commit 7f8a12c
 Author: Solo Developer <nguyenphucduyanh@dev>
 Date:   2026-11-15
