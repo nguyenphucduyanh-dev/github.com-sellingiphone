@@ -1,0 +1,34 @@
+CREATE DATABASE PhoneStoreDb;
+GO
+USE PhoneStoreDb;
+GO
+
+CREATE TABLE Products (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(150) NOT NULL,
+    Brand NVARCHAR(50) NOT NULL,
+    Price DECIMAL(18,0) NOT NULL,
+    Stock INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Orders (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerName NVARCHAR(150) NOT NULL,
+    OrderDate DATETIME NOT NULL DEFAULT GETDATE(),
+    TotalAmount DECIMAL(18,0) NOT NULL,
+    Status INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE OrderDetails (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    OrderId INT NOT NULL REFERENCES Orders(Id),
+    ProductId INT NOT NULL REFERENCES Products(Id),
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(18,0) NOT NULL
+);
+
+INSERT INTO Products (Name, Brand, Price, Stock) VALUES
+(N'iPhone 16 Pro Max 256GB', N'Apple', 34990000, 15),
+(N'Galaxy S25 Ultra 512GB', N'Samsung', 31990000, 12),
+(N'Xiaomi 14T Pro', N'Xiaomi', 16990000, 20);
+GO
